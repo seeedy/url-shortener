@@ -109,7 +109,13 @@ app.post('/new', (req, res) => {
 
 
 ///////////////////////////////////////////////////
-app.set('port', process.env.port || 8080 );
-const server = app.listen(app.get('port'), () => {
-    console.log(`Express running, listening on port ${server.address().port}`);
+// app.set('port', process.env.PORT || 8080 );
+// const server = app.listen(app.get('port'), () => {
+//     console.log(`Express running, listening on port ${server.address().port}`);
+// });
+
+
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+    console.log(`Our app is running on port ${ PORT }`);
 });
