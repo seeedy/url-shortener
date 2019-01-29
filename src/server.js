@@ -27,8 +27,12 @@ MongoClient.connect(dbUrl, { useNewUrlParser: true })
 
 const shortenUrl = (db, url) => {
     const shortenedURLs = db.collection('shortenedURLs');
+    // findOneAndUpdate() method modifies a document that already exists
+    // or creates it if it doesn’t exist.
     return shortenedURLs.findOneAndUpdate(
         { original_url: url },
+        // $setOnInsert operator sets value of the document only if
+        // it is being inserted, no modification if it already exists
         { $setOnInsert: {
             original_url: url,
             short_id: nanoid(7),
@@ -40,10 +44,32 @@ const shortenUrl = (db, url) => {
     );
 };
 
+const checkIfShortExists = (db, id) => {
+    // findOne() method returns document that matches the filter object passed
+    // to it or null if no documents match the filter.
+        return db.collection('shortenedURLs').findOne({ short_id: id });
+};
+
 
 app.get('/', (req, res) => {
     const htmlPath = path.join(__dirname, 'public', 'index.html');
     res.sendFile(htmlPath);
+});
+
+app.get('/:short_id', (req, res) => {
+    const shortId = req.params.short_id;
+    const { db } = req.app.locals;
+
+    console.log(shortId);
+
+    checkIfShortExists(db, shortId)
+        .then(doc => {
+            if (doc === null) {
+                return res.send('No link at that URL found');
+            }
+            res.redirect(doc.original_url);
+        })
+        .catch(console.error);
 });
 
 app.post('/new', (req, res) => {
@@ -56,6 +82,7 @@ app.post('/new', (req, res) => {
     } catch (err) {
         console.log(err);
         return res.status(400).send({ error: 'invalid url' });
+        res.redirect(doc.original_id);
     }
 
     dns.lookup(originalUrl.hostname, (err) => {
@@ -65,15 +92,15 @@ app.post('/new', (req, res) => {
 
         const { db } = req.app.locals;
         shortenUrl(db, originalUrl.href)
-        .then(result => {
-            const doc = result.value;
-            res.json({
-                original_url: doc.original_url,
-                short_id: doc.short_id,
-            });
+            .then(result => {
+                const doc = result.value;
+                res.json({
+                    original_url: doc.original_url,
+                    short_id: doc.short_id,
+                });
         })
         .catch(console.error);
-    })
+    });
 
 });
 
