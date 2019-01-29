@@ -9,6 +9,8 @@ const { MongoClient } = require('mongodb');
 const nanoid = require('nanoid');
 
 const dbUrl = process.env.DATABASE;
+// process.env.DATABASE needs to be in uppercase otherwise bug in heroku!!!
+
 
 
 const app = express();
@@ -114,8 +116,4 @@ const server = app.listen(app.get('port'), () => {
     console.log(`App running, listening on port ${server.address().port}`);
 });
 
-
-// const PORT = process.env.PORT || 8080;
-// app.listen(PORT, () => {
-//     console.log(`Our app is running on port ${ PORT }`);
-// });
+// process.env.PORT needs to be in uppercase otherwise bug in heroku!!!
