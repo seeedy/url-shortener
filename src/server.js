@@ -8,7 +8,7 @@ const dns = require('dns');
 const { MongoClient } = require('mongodb');
 const nanoid = require('nanoid');
 
-const dbUrl = process.env.database;
+const dbUrl = process.env.DATABASE;
 
 
 const app = express();
@@ -109,13 +109,13 @@ app.post('/new', (req, res) => {
 
 
 ///////////////////////////////////////////////////
-// app.set('port', process.env.PORT || 8080 );
-// const server = app.listen(app.get('port'), () => {
-//     console.log(`Express running, listening on port ${server.address().port}`);
-// });
-
-
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-    console.log(`Our app is running on port ${ PORT }`);
+app.set('port', process.env.PORT || 8080 );
+const server = app.listen(app.get('port'), () => {
+    console.log(`App running, listening on port ${server.address().port}`);
 });
+
+
+// const PORT = process.env.PORT || 8080;
+// app.listen(PORT, () => {
+//     console.log(`Our app is running on port ${ PORT }`);
+// });
